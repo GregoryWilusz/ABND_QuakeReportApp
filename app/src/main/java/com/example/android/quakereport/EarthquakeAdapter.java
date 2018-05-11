@@ -18,6 +18,9 @@ import java.util.Date;
  */
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
+
+    private static final String LOCATION_SEPARATOR = " of ";
+
     /**
      * Constructor
      *
@@ -40,12 +43,28 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
         final Earthquake currentEarthquake = getItem(position);
 
         TextView earthQuakeMagnitudeTextView = convertView.findViewById(R.id.magnitude_text_view);
-        TextView earthQuakeLocationTextView = convertView.findViewById(R.id.location_text_view);
+        TextView earthQuakeLocationOffsetTextView = convertView.findViewById(R.id.location_offset_text_view);
+        TextView earthQuakePrimaryLocationTextView = convertView.findViewById(R.id.primary_location_text_view);
         TextView earthQuakeDateTextView = convertView.findViewById(R.id.date_text_view);
         TextView earthQuakeTimeTextView = convertView.findViewById(R.id.time_text_view);
 
         earthQuakeMagnitudeTextView.setText(currentEarthquake.getMagnitude());
-        earthQuakeLocationTextView.setText(currentEarthquake.getLocation());
+
+        String originalLocation = currentEarthquake.getLocation();
+        String locationOffset;
+        String primaryLocation;
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+        } else {
+            locationOffset = getContext().getString(R.string.near_the);
+            primaryLocation = originalLocation;
+        }
+
+        earthQuakeLocationOffsetTextView.setText(locationOffset);
+        earthQuakePrimaryLocationTextView.setText(primaryLocation);
 
         Date dateObject = new Date(currentEarthquake.getTimeInMilliseconds());
 
@@ -59,7 +78,7 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
     }
 
     private String formatDate(Date dateObject) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy");
         return dateFormat.format(dateObject);
     }
 
