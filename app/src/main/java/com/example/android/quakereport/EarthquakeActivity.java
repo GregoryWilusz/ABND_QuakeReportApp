@@ -22,10 +22,10 @@ import android.content.Loader;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +40,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
     private static final String LOG_TAG = EarthquakeActivity.class.getName();
     private EarthquakeAdapter mAdapter;
     private static final String REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=5&limit=10";
+    /** TextView that is displayed when the list is empty */
+    private TextView mEmptyStateTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +50,8 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = findViewById(R.id.list);
+        mEmptyStateTextView = findViewById(R.id.empty_text_view);
+        earthquakeListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new adapter that takes an empty list of earthquakes as input
         mAdapter = new EarthquakeAdapter(this, new ArrayList<Earthquake>());
@@ -98,6 +102,9 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
+        // Set empty state text to display "No earthquakes found."
+        mEmptyStateTextView.setText(R.string.empty);
+
         // Clear the adapter of previous earthquake data
         mAdapter.clear();
         // If there is a valid list of {@link Earthquake}s, then add them to the adapter's
