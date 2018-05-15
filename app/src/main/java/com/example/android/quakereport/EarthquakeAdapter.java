@@ -8,6 +8,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -23,6 +24,8 @@ import java.util.Date;
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     private static final String LOCATION_SEPARATOR = " of ";
+
+
 
     /**
      * Constructor
@@ -130,6 +133,8 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
         return ContextCompat.getColor(getContext(), magnitudeColorResourceId);
     }
+
+
 
     private String formatMagnitude(double magnitude) {
         DecimalFormat formatter = new DecimalFormat("0.0");
