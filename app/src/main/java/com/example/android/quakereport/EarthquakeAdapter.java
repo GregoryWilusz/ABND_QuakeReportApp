@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
@@ -16,6 +15,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by grzegorzwilusz on 5/10/18.
@@ -25,15 +26,11 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake> {
 
     private static final String LOCATION_SEPARATOR = " of ";
 
-
-
     /**
      * Constructor
-     *
-     * @param context     The current context.
-     * @param earthquakes objects to represent in the ListView.
-     */
-    public EarthquakeAdapter(@NonNull Context context, @NonNull ArrayList<Earthquake> earthquakes) {
+     *  @param context     The current context.
+     * @param earthquakes objects to represent in the ListView.*/
+    public EarthquakeAdapter(EarthquakeActivity context, List<Earthquake> earthquakes) {
         super(context, 0, earthquakes);
     }
 
