@@ -50,6 +50,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = findViewById(R.id.list);
+
         mEmptyStateTextView = findViewById(R.id.empty_text_view);
         earthquakeListView.setEmptyView(mEmptyStateTextView);
 
@@ -102,6 +103,10 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
 
     @Override
     public void onLoadFinished(Loader<List<Earthquake>> loader, List<Earthquake> earthquakes) {
+        // Hide loading indicator because the data has been loaded
+        View loadingIndicator = findViewById(R.id.progress_bar);
+        loadingIndicator.setVisibility(View.GONE);
+
         // Set empty state text to display "No earthquakes found."
         mEmptyStateTextView.setText(R.string.empty);
 
