@@ -1,6 +1,7 @@
 package com.example.android.quakereport;
 
 import android.content.SharedPreferences;
+import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -23,8 +24,11 @@ public class SettingsActivity extends AppCompatActivity {
             addPreferencesFromResource(R.xml.settings_main);
 
             // we can use its findPreference() method to get the Preference object
-            Preference minMagnitude = findPreference(getString(R.string.settings_min_magnitude_key));
+            Preference orderBy = findPreference(getString(R.string.settings_order_by_key));
             // To help us with binding the value that’s in SharedPreferences to what will show up in the preference summary, we’ll create a helper method
+            bindPreferenceSummaryToValue(orderBy);
+
+            Preference minMagnitude = findPreference(getString(R.string.settings_min_magnitude_key));
             bindPreferenceSummaryToValue(minMagnitude);
         }
 
@@ -38,10 +42,21 @@ public class SettingsActivity extends AppCompatActivity {
          * @return True to update the state of the Preference with the new value.
          */
         @Override
+        // Takes in the preference value, converts it to a String, and displays that value in the summary UI
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             // The code in this method takes care of updating the displayed preference summary after it has been changed
             String stringValue = newValue.toString();
-            preference.setSummary(stringValue);
+            // Add tje logic to properly update the summary of a ListPreference (using the label, instead of the key):
+            if (preference instanceof ListPreference) {
+                ListPreference listPreference = (ListPreference) preference;
+                int prefIndex = listPreference.findIndexOfValue(stringValue);
+                if (prefIndex >= 0) {
+                    CharSequence[] labels = listPreference.getEntries();
+                    preference.setSummary(labels[prefIndex]);
+                }
+            } else {
+                preference.setSummary(stringValue);
+            }
             return true;
         }
 
