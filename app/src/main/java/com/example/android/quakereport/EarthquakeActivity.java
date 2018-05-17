@@ -20,10 +20,12 @@ import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,7 +64,7 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
      */
     private static final int EARTHQUAKE_ID = 1;
     private EarthquakeAdapter mAdapter;
-    private static final String REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&orderby=time&minmag=5&limit=10";
+    private static final String REQUEST_URL = "https://earthquake.usgs.gov/fdsnws/event/1/query";
     /**
      * TextView that is displayed when the list is empty
      */
@@ -137,9 +139,32 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderCallb
      * @return Return a new Loader instance that is ready to start loading.
      */
     @Override
+    // onCreateLoader instantiates and returns a new Loader for the given ID
     public Loader<List<Earthquake>> onCreateLoader(int id, Bundle bundle) {
-        // Create a new loader for the given URL
-        return new EarthquakeLoader(this, REQUEST_URL);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        // getString retrieves a String value from the preferences. The second parameter is the default value for this preference.
+        String minMagnitude = sharedPreferences.getString(
+                getString(R.string.settings_min_magnitude_key),
+                getString(R.string.settings_min_magnitude_default));
+
+        // parse breaks apart the URI string that's passed into its parameter
+        Uri baseUri = Uri.parse(REQUEST_URL);
+
+        // buildUpon prepares the baseUri that we just parsed so we can add query parameters to it
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+
+        // ?format=geojson&orderby=time&minmag=5&limit=10"
+        // Append query parameter and its value. For example, the `format=geojson`
+        uriBuilder.appendQueryParameter("format", "geojson");
+        uriBuilder.appendQueryParameter("limit", "10");
+        uriBuilder.appendQueryParameter("minmag", minMagnitude);
+        uriBuilder.appendQueryParameter("orderby", "time");
+
+        // Create a new loader for the returned the completed uri
+        // `http://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson&limit=10&minmag=minMagnitude&orderby=time`
+        return new EarthquakeLoader(this, uriBuilder.toString());
 
     }
 
